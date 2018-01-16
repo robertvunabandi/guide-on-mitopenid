@@ -30,7 +30,7 @@ For `Logo`, you will enter whatever URL you may have. It's optional though. Ever
 It will refresh the page, and you should see something like this (**by the way, this app was deleted so it's pointless to attempt to copy the id and secret and RegistrationAccessToken**):
 ![OIDC register a new client](images/screenshot3.png).
 
-Once you have this, as it clearly says in <span style="color:red">**red**</span>, you MUST save your `ClientID`, `ClientSecret`, and `RegistrationAccessToken` otherwise you will not be able to access this screen again (for this app you created). So, make sure you save it! (I lost an app myself :( ).
+Once you have this, as it clearly says in <span style="color:red">**red**</span>, you MUST save your `ClientID`, `ClientSecret`, and `RegistrationAccessToken` otherwise you will not be able to access this screen again (for this app you created). So, make sure you save it! (I lost an app myself :confounded: ).
 
 Next and final thing to do is to go on the `Access` tab. You will see this: 
 ![OIDC register a new client](images/screenshot4.png).
@@ -55,6 +55,8 @@ Then, ignore everything else and click on `Save`. Now, you should be ready to mo
 4. Finally, the last thing is to modify your `User` model. Go into `user.js` and remove the parameters that are not needed and add whatever is needed. 
 
 Now you may ask, **"How do I know what's needed (i.e. what is in this user object that I receive from MIT's OpenID)?"** MIT OpenID doesn't have documentation that specify these; however, you can test this out with modifying `./src/passport.js`. Inside of the big function `passport.use('oidc', new OAuth2Strategy ...`, there is a comment that says `// uncomment this to see what your user object looks like`. You just have to uncomment the next line and check your logs. This may cause an error as your server handles the request, but it's okay because (in theory) you will fix your user model to have only the parameters you requested (which are given in that object).
+
+Now you should be good! Make sure to run `npm install` when you are ready to run your app.
 
 ## Integrate MIT OpenID from existing source code
 
