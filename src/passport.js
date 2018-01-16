@@ -16,7 +16,8 @@ const oauth_credentials = require('./openid_credentials.js');
 // https://mysterious-headland-54722.herokuapp.com
 const host = 'http://localhost:3000';
 
-// create the passport Oauth2.0 parameters
+// create the passport OAuth2.0 parameters
+// these parameters are simply required by OAuth2.0
 const passport_parameter = {
 	authorizationURL: 'https://oidc.mit.edu/authorize',
 	tokenURL: 'https://oidc.mit.edu/token',
