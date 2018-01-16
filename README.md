@@ -60,6 +60,15 @@ Now, you may ask, **"How do I know what's needed (i.e. what is in this user obje
 
 Now you should be good! Make sure to run `npm install` when you are ready to run your app.
 
+Your app should look like this:
+![home page not logged in](images/screenshot5.png)
+And lead you to this page after you click on login:
+![login with MIT OpenID](images/screenshot6.png)
+Then in this page, you confirm that you want to add the app:
+![confirmation page to log authorize client application](images/screenshot7.png)
+Then when you're logged in, it will take you here:
+![home page logged in](images/screenshot8.png)
+
 ## Integrate MIT OpenID from existing source code
 
 To integrate MIT OpenID to your app, we need to make a set of assumptions about your file structure. 
@@ -356,7 +365,7 @@ Now, if you run `npm start`, your app (in theory) should be able to run and prov
 
 ## Following the Passport documentation
 
-How did I know how to use `passport` for this? I simply went on [passport](http://www.passportjs.org/docs/oauth/) and clicked on the `Oauth` section. I also copied a bit from [Catbook](https://github.com/mit6148-workshops/catbook).
+How did I know how to use `passport` for this? I simply went on [passport](http://www.passportjs.org/docs/) and clicked on the `Oauth` section. I also copied a bit from [Catbook](https://github.com/mit6148-workshops/catbook).
 
 For `morgan`, I simply went on [morgan npm](https://www.npmjs.com/package/morgan)'s guide. This guide is very straightforward.
 
