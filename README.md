@@ -4,6 +4,8 @@ This guide will walk you through setting up MIT OpenID for your app. The code pr
 
 If you would like to simply integrate MIT OpenID into your app without following this skeleton, skip over that section.
 
+This guide assumes that you are MIT affiliated. You will not be able to log into [oidc.mit.edu](https://oidc.mit.edu/) otherwise.
+
 ## Use MIT OpenID from this source code
 
 This code will work correctly for `AuthorizationCode` Oauth2.0 requests (it doesn't matter too much what it is, but if you're curious, go under the section about understanding Oauth2.0). So, some parameters will have to be set as said here. 
@@ -13,11 +15,11 @@ This code will work correctly for `AuthorizationCode` Oauth2.0 requests (it does
 Go on [oidc.mit.edu](https://oidc.mit.edu/) and log in. You should be able to log in with your kerberos and kerberos password. 
 
 Once logged, you should see the following screen: 
-![OIDC home page](images/screenshot1.png).
+![OIDC home page](images/screenshot1.png)
 
 The next step is to go on `Self-service client registration` under the `Developer`'s section. Once you click there, click on `Register a new client`. Then, you get the following screen:
 
-![OIDC register a new client](images/screenshot2.png).
+![OIDC register a new client](images/screenshot2.png)
 
 Now, you have to complete all the necessary information. The `client name` is the name of your app: *this is the name people will see when they are prompted to authorize your app*. Make sure to give it a clear and "representative of your app" name.
 
@@ -28,12 +30,12 @@ For `redirect URI(s)`, there are two cases:
 For `Logo`, you will enter whatever URL you may have. It's optional though. Everything else is optional as well. Finally, I don't think it's important, but you should select your `application type` to be `Web`. When you're done, click on `Save`!
 
 It will refresh the page, and you should see something like this (**by the way, this app was deleted so it's pointless to attempt to copy the id and secret and RegistrationAccessToken**):
-![OIDC register a new client](images/screenshot3.png).
+![OIDC register a new client](images/screenshot3.png)
 
 Once you have this, as it clearly says in <span style="color:red">**red**</span>, you MUST save your `ClientID`, `ClientSecret`, and `RegistrationAccessToken` otherwise you will not be able to access this screen again (for this app you created). So, make sure you save it! (I lost an app myself :confounded: ).
 
 Next and final thing to do is to go on the `Access` tab. You will see this: 
-![OIDC register a new client](images/screenshot4.png).
+![OIDC register a new client](images/screenshot4.png)
 
 Here's where you choose the scopes. There are many more scopes (which are suggested on keypress). These scopes are simply what your application will need to access from the user. Put whatever you need there and **remove whatever you do not need** there (some users do not like to share certain information, such as their phone number). 
 
