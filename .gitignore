@@ -1,0 +1,6 @@
+.idea
+/*.log
+node_modules/
+*.swp
+secret.js
+package-lock.json

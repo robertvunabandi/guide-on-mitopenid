@@ -1,0 +1,11 @@
+#page {
+	padding-top: 7rem;
+	margin: 0 auto;
+	font-weight: 900;
+	text-align: center;
+	font-size: 4rem;
+}
+
+.bg-primary, .navbar-dark, .navbar-expand-lg, .navbar {
+	background-color: darkred !important;
+}
