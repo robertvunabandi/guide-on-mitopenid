@@ -2,7 +2,7 @@
 
 This guide will walk you through setting up MIT OpenID for your app. The code provided in this guide is a skeleton code for an app (similar to [Catbook](https://github.com/mit6148-workshops/catbook)) with server-side material located in `./src` and client-side material located in `./public`.
 
-If you would like to simply integrate MIT OpenID into your app without following this skeleton, skip over that [section](#Integrate MIT OpenID from existing source code (Advanced)).
+If you would like to simply integrate MIT OpenID into your app without following this skeleton, skip over that section (it's titled **Integrate MIT OpenID from existing source code**).
 
 This guide assumes that you are MIT affiliated. You will not be able to log into [oidc.mit.edu](https://oidc.mit.edu/) otherwise. It also assumes you are using `NodeJS` as an engine and running your server with `ExpressJS`. It also assumes that you are using a MongoDB database.
 
@@ -56,11 +56,11 @@ Then, ignore everything else and click on `Save`. Now, you should be ready to mo
 
 4. Finally, the last thing is to modify your `User` model. Go into `user.js` and remove the parameters that are not needed and add whatever is needed. 
 
-Now you may ask, **"How do I know what's needed (i.e. what is in this user object that I receive from MIT's OpenID)?"** MIT OpenID doesn't have documentation that specify these; however, you can test this out with modifying `./src/passport.js`. Inside of the big function `passport.use('oidc', new OAuth2Strategy ...`, there is a comment that says `// uncomment this to see what your user object looks like`. You just have to uncomment the next line and check your logs. This may cause an error as your server handles the request, but it's okay because (in theory) you will fix your user model to have only the parameters you requested (which are given in that object).
+Now, you may ask, **"How do I know what's needed (i.e. what is in this user object that I receive from MIT's OpenID)?"** Although MIT OpenID doesn't have documentation that specify these things, you can test this out with modifying `./src/passport.js`. Inside of the big function `passport.use('oidc', new OAuth2Strategy ...`, there is a comment that says `// uncomment this to see what your user object looks like`. You just have to uncomment the next line and check your logs. This may cause an error as your server handles the request, but it's okay because (in theory) you will fix your user model to have only the parameters you requested (which are given in that object).
 
 Now you should be good! Make sure to run `npm install` when you are ready to run your app.
 
-## Integrate MIT OpenID from existing source code (Advanced)
+## Integrate MIT OpenID from existing source code
 
 To integrate MIT OpenID to your app, we need to make a set of assumptions about your file structure. 
 1. Your server files are in `./src`, and your public files are in `./public`.
