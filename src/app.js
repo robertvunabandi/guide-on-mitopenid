@@ -24,6 +24,13 @@ app.use(bodyParser.json());
 app.use(cors());
 
 // morgan to log requests sent to this server
+// -
+// every time a request is sent to this server,
+// morgan logs that request with its method
+// (POST or GET), the status code (e.g. 200),
+// the url (e.g.: '/logout'), etc. You can see
+// the documentation for this with this link:
+// https://www.npmjs.com/package/morgan
 app.use(morgan(':method :status :url :response-time ms :res[content-length]'));
 
 // set up sessions

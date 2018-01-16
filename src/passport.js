@@ -4,7 +4,8 @@ const passport = require('passport');
 const OAuth2Strategy = require('passport-oauth').OAuth2Strategy;
 const request = require('request');
 
-// load models
+// load the User model since the application user gets saved
+// within a function in this file
 const User = require('./models/user');
 
 // load your client credentials, which are provided by MIT OpenID
@@ -12,7 +13,7 @@ const oauth_credentials = require('./openid_credentials.js');
 
 // if your app is deployed, change the host with whatever host
 // you have. A Heroku app host will look like:
-// https://mysterious-headland-54722.herokuapp.com/
+// https://mysterious-headland-54722.herokuapp.com
 const host = 'http://localhost:3000';
 
 // create the passport Oauth2.0 parameters
@@ -24,15 +25,23 @@ const passport_parameter = {
 	callbackURL: host + '/auth/oidc/callback'
 };
 
+// the first parameter is 'oidc'. Inside of ./src/app.js, you will
+// see app.get('/auth/oidc', passport.authenticate('oidc'));
+// the part where it says passport.authenticate('oidc') is when
+// passport goes into executing the function inside of this. Before
+// doing it though, it does many things (like 'magic') in order
+// to get the accessToken and refreshToken.
 passport.use('oidc', new OAuth2Strategy(passport_parameter, function (accessToken, refreshToken, profile, done) {
 
+	// the callback of this function is to simply run getUserInformation(),
+	// which is defined below
 	getUserInformation();
 
+	// make a request to openid to get the information about this user,
+	// which we're able to get because we have the accessToken (like a
+	// key) that oidc.mit.edu needs in order to provide us with the
+	// requested information
 	function getUserInformation() {
-		// make a request to openid to get the information about this user,
-		// which we're able to get because we have the accessToken (like a
-		// key) that oidc.mit.edu needs in order to provide us with the
-		// requested information
 		request(buildUserInfoRequestParameter(accessToken), function (error, response, body) {
 			if (!error && response.statusCode === 200) {
 				// uncomment the next line to see what your user object looks like
@@ -44,6 +53,10 @@ passport.use('oidc', new OAuth2Strategy(passport_parameter, function (accessToke
 		});
 	}
 
+	// this function basically works with 'request' to make a get request
+	// with the header 'Authorization': 'Bearer <accessToken>', which is
+	// where we put the key (accessToken) in order to exchange it for the
+	// application user's informations
 	function buildUserInfoRequestParameter(accessToken) {
 		return {
 			url: 'https://oidc.mit.edu/userinfo',

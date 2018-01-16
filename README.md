@@ -2,9 +2,9 @@
 
 This guide will walk you through setting up MIT OpenID for your app. The code provided in this guide is a skeleton code for an app (similar to [Catbook](https://github.com/mit6148-workshops/catbook)) with server-side material located in `./src` and client-side material located in `./public`.
 
-If you would like to simply integrate MIT OpenID into your app without following this skeleton, skip over that section.
+If you would like to simply integrate MIT OpenID into your app without following this skeleton, skip over that [section](#Integrate MIT OpenID from existing source code (Advanced)).
 
-This guide assumes that you are MIT affiliated. You will not be able to log into [oidc.mit.edu](https://oidc.mit.edu/) otherwise.
+This guide assumes that you are MIT affiliated. You will not be able to log into [oidc.mit.edu](https://oidc.mit.edu/) otherwise. It also assumes you are using `NodeJS` as an engine and running your server with `ExpressJS`. It also assumes that you are using a MongoDB database.
 
 ## Use MIT OpenID from this source code
 
@@ -60,10 +60,299 @@ Now you may ask, **"How do I know what's needed (i.e. what is in this user objec
 
 Now you should be good! Make sure to run `npm install` when you are ready to run your app.
 
-## Integrate MIT OpenID from existing source code
+## Integrate MIT OpenID from existing source code (Advanced)
 
-`This section is under development`
-For now, simply try to look at the source code and try to integrate MIT OpenID with your app is. 
+To integrate MIT OpenID to your app, we need to make a set of assumptions about your file structure. 
+1. Your server files are in `./src`, and your public files are in `./public`.
+2. Your main file (the file that runs when you type `npm start` on your console) is named `app.js` and is located in `./src/app.js`. 
+
+For the rest of this guide:
+- `AppUser` refers to the user of your app, and
+- `AppClient` refers to your application's server
+
+If you are starting a new project, just use the [section](#Use MIT OpenID from this source code) about that instead.
+
+### Step 1: Install Dependencies 
+
+Make sure you have installed all necessary dependencies.  
+
+Run the following: 
+
+    npm install --save express-session passport passport-oauth request 
+
+What each of those do:
+- `express-session`: We use sessions to save the `AppUser`'s `AccessToken`, which is like a key that allows your `AppClient` to get information about that user, on the `AppUser`'s browser. 
+- `passport`: PassportJS is our mean of authenticating.
+- `passport-oauth`: MIT OpenID abides by [Oauth2.0](https://oauth.net/2/), so we need the passport's implementation of Oauth2.0.
+- `request`: Needed to make GET and POST requests within the server. We use this to query the `AppUser`'s data (email, id, etc).
+
+### Step 2: Hook Up the right endpoints to your frontend
+
+You need an endpoint on your front-end that allows a user to login with MIT OpenID. We'll name that endpoint `'/auth/oidc'`. 
+
+We will implement this endpoint on our backend later, but first, set your `Login` button's `href` on your front-end to be `'/auth/oidc'`. Here's an example: 
+
+```javascript
+function newNavbarItem(text, url) {
+	let itemLink = document.createElement('a');
+	itemLink.className = 'nav-item nav-link';
+	itemLink.innerHTML = text;
+	itemLink.href = url;
+
+	return itemLink;
+}
+
+function renderNavbar(user) {
+	const navbarDiv = document.getElementById('nav-item-container');
+	navbarDiv.appendChild(newNavbarItem('Home', '/'));
+	// NOTE: this check is a lowkey hack
+	if (user._id) {
+		navbarDiv.appendChild(newNavbarItem('Logout', '/logout'));
+	} else {
+		// set the login button's href to point to '/auth/oidc'
+		navbarDiv.appendChild(newNavbarItem('Login', '/auth/oidc'));
+	}
+}
+```
+
+Our `renderNavbar` method sets the login button's href to point to `'/auth/oidc'`. Since this app is running with a server, when a user clicks on this login button, it leads them to `http://localhost:3000/auth/oidc`, which we will implement on the backend.
+
+If you have your own way of implementing your navbar (or if your login button is not on the navbar), just make sure to make a button with the `'a'` HTML tag that has `href='/auth/oidc'` so that it points to the correct endpoint on your backend to log the user in using MIT OpenID.
+
+Then, make your logout button point to the endpoint `'/logout'` (as done in the above example). 
+
+Finally to run a get request to `'/whoami'` at the start of your app to get the `AppUser`'s credential and log them in. For us, we make the get request inside of `./public/js/script.js` (which is named `./public/js/index.js` on the Catbook app), which returns an empty object if the user is not logged in or returns a user object *from the MongoDB mLab database* if the user is logged in. 
+
+I.e., we do the following on load: 
+
+```javascript
+get('/api/whoami', {}, function (user) {
+	// do something with "user", which is {} if 
+	// the AppUser is not logged in and 
+	// { _id: ..., ...} if AppUser is logged in
+	// for example: 
+	renderNavbar(user);
+	renderPage(user);
+});
+```
+
+### Step 3: Implement your Backend Endpoints
+
+To keep our work clean, we will split the work of authenticating the user into multiple files (and maybe folders).
+
+#### 3.1. Create `openid_credentials.js`
+
+This file will simply contain your credentials that you got from signing up to openid. If you haven't done so, follow the **Step 1: Get your app's client ID** guide under the section on **Use MIT OpenID from this source code** above to sign up. Then, come back to this step.
+
+Create `openid_credentials.js` inside of your `./src` directory. Then, copy this code into it: 
+```javascript
+module.exports = {
+	client: {
+		id: 'paste your client id from https://oidc.mit.edu/',
+		secret: 'paste your client secret from https://oidc.mit.edu/'
+	},
+	auth: {
+		tokenHost: 'https://oidc.mit.edu',
+		tokenPath: '/token',
+		authorizePath: '/authorize'
+	}
+};
+``` 
+We will actually not use the `auth` key, but in case you didn't want to use `passport`, then you would need it. Also, it's there just so you know who the host is. For our case, it's `'https://oidc.mit.edu'`.
+
+#### 3.2. Create `passport.js`
+We will need to create a file just to handle what passport is doing to log `AppUser` in. Create the file `passport.js` inside of your `./src` directory, and then paste the following code into it:
+
+```javascript
+const passport = require('passport');
+const OAuth2Strategy = require('passport-oauth').OAuth2Strategy;
+const request = require('request');
+// checkpoint 1
+const User = require('./models/user');
+// checkpoint 2
+const oauth_credentials = require('./openid_credentials.js');
+// checkpoint 3
+const host = 'http://localhost:3000';
+// checkpoint 4
+const passport_parameter = {
+	authorizationURL: 'https://oidc.mit.edu/authorize',
+	tokenURL: 'https://oidc.mit.edu/token',
+	clientID: oauth_credentials.client.id,
+	clientSecret: oauth_credentials.client.secret,
+	callbackURL: host + '/auth/oidc/callback'
+};
+// checkpoint 5
+// inside there are other checkpoints listed as 5.x (x is a natural integer)
+passport.use('oidc', new OAuth2Strategy(passport_parameter, function (accessToken, refreshToken, profile, done) {
+
+	getUserInformation();
+
+	function getUserInformation() {
+		// checkpoint 5.1
+		request(buildUserInfoRequestParameter(accessToken), function (error, response, body) {
+			if (!error && response.statusCode === 200) {
+				// checkpoint 5.2
+				// uncomment the next line to see what your user object looks like
+				// console.log(JSON.parse(body))
+				return findOrCreateUser(JSON.parse(body));
+			} else {
+				return done(new Error('An error occurred while making the access request'));
+			}
+		});
+	}
+	// checkpoint 5.3
+	function buildUserInfoRequestParameter(accessToken) {
+		return {
+			url: 'https://oidc.mit.edu/userinfo',
+			headers: {
+				'Authorization': 'Bearer ' + accessToken
+			}
+		};
+	}
+	// checkpoint 5.4
+	function findOrCreateUser(userInformation) {
+		User.findOne({openid: userInformation.sub}, function (err, user) {
+			if (err) {
+				return done(err);
+			} else if (!user) {
+				return createUser(userInformation);
+			}
+			return done(err, user);
+		});
+	}
+	// checkpoint 5.5
+	function createUser(userInformation) {
+		const new_user = new User({
+			name: userInformation.name,
+			given_name: userInformation.given_name,
+			middle_name: userInformation.middle_name,
+			family_name: userInformation.family_name,
+			email: userInformation.email,
+			openid: userInformation.sub
+		});
+		new_user.save(function (err, user) {
+			if (err) {
+				return done(err);
+			}
+			return done(err, user);
+		});
+	}
+}));
+// checkpoint 6
+passport.serializeUser(function (user, done) {
+	done(null, user);
+});
+// checkpoint 7
+passport.deserializeUser(function (user, done) {
+	done(null, user);
+});
+
+module.exports = passport;
+```
+I put multiple `checkpoints` in the code above so that the comments do not clutter up the space. I explain those comments. More details below.
+
+With `checkpoint 1`, I want to mention that it assumes that you are using [MongoDB](https://docs.mongodb.com/manual/) and `mongoose`. If you are not, you will need to figure out how to store the user and retrieve inside of the big function call right after `checkpoint 5`.
+
+With `checkpoint 3`: This `host` variable is your app's `URL`. If your app is to be deployed, make sure to change it. An heroku `URL` would look like `https://mysterious-headland-54722.herokuapp.com` for example. That's the `URL` you would put there. *MAKE SURE **NOT** TO INCLUDE A `'/'` AT THE END!* 
+
+That, should be the only thing you may need to change in this file (or the port number if you're using a different port).
+
+Now, although I put `checkpoints` everywhere, for each of those checkpoints, I actually put comments in this demo code. So, you can go into the demo code's file and see what each of those checkpoints mean.
+
+#### 3.3. Hook `passport.js` into `app.js`
+
+By now, your app is almost ready to run!
+
+Open your `./src/app.js` (or whichever file gets run when you run `npm start`, you can see this in your `package.json`).
+
+We need to make sure passport actually runs. 
+
+Wherever you import your libraries, add the following `const session = require('express-session');`. This imports the `express-session` library. 
+
+Then, wherever you import your local dependencies, make sure to import the newly created `passport.js` file with `const passport = require('./passport.js');` (you can also just write `const passport = require('./passport');`, `Javscript` will know it's a Javascript file). 
+
+Then, before you set up your routes (for example, before placing `app.use('/', views);`), add the following line:
+
+```javascript
+// set up sessions
+app.use(session({
+	secret: 'session-secret', // <- make sure to make this a more secure secret
+	resave: 'false',
+	saveUninitialized: 'true'
+}));
+```
+
+As it says in the comments, make sure to change your secret to something more secure. Then, right after that, add the following lines: 
+
+```javascript
+// hook up passport
+app.use(passport.initialize());
+app.use(passport.session());
+```
+
+Now, we're good with that. Then, the last thing we need to do is implement the `authentication routes` (these are done using `app.get` for `GET` requests sent to you `AppClient`). So, after you have set up your routes (for example, after placing `app.use('/', views);`), paste the following: 
+
+```javascript
+// authentication routes
+// first route to make the authorization request and get the accessToken
+// the accessToken is a key that allows us to retrieve the requested
+// information from the server
+app.get('/auth/oidc', passport.authenticate('oidc'));
+// in the callback, we actually check if the user is logged in. If the
+// user is or is not, we take the appropriate action. usually,
+// failureRedirect is '/login', but we just send back to the home page
+app.get('/auth/oidc/callback', passport.authenticate('oidc', {
+	successRedirect: '/',
+	failureRedirect: '/'
+}));
+```
+
+I also added functions as to what they do. If you remember, these are the endpoints we implemented into frontend.
+
+#### 3.4: Implement `'/whoami'` and `'/logout'`
+ 
+Assuming you use the endpoint `'/'` within the `./src/routes/views.js` file, go into that file and add the following line: 
+
+```javascript
+router.get('/logout', function (req, res) {
+	req.logout();
+	res.redirect('/');
+});
+```
+
+`req.logout()` is a method that `passport` 'magically' adds into our request. This method effectively logs the user out. Then, the method `res.redirect('/');` sends the request to the  `'/'` endpoint, which should (ideally) send the user to the home page (the page they first see whenever they go into the website for the first time). 
+
+Now, assuming you also have an `./src/routes/api.js` folder for your apis, go into that file and add the following: 
+
+```javascript
+router.get('/whoami', function (req, res) {
+	res.send(req.isAuthenticated() ? req.user : {});
+});
+```
+
+`req.isAuthenticated()` is another method that `passport` 'magically' adds into our request. This method checks if the user is logged in. If they are not logged in, it just returns `false` (it's a boolean return method). For us, we wanted to return an empty object in case our user was not logged in, which is what that [ternary](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Conditional_Operator) operation does. 
+
+**What if I do not have an `./src/routes/api.js` file?** 
+
+Simply go into your `./src/app.js` and add the following: 
+
+```javascript
+app.get('/whoami', function (req, res) {
+	res.send(req.isAuthenticated() ? req.user : {});
+});
+```
+
+That assumes that somewhere in your code, you have:
+
+```javascript
+const app = express();
+```
+
+**What if I do not have an `./src/app.js` file?** 
+
+We assumed that you have it! Otherwise, how did you even get to this step? Some people name it `./src/index.js` instead of `./src/app.js`. 
+
+Now, if you run `npm start`, your app (in theory) should be able to run and provide authentication with MIT OpenID. 
 
 ## Following the Passport documentation
 
