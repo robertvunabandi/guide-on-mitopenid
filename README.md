@@ -217,7 +217,7 @@ passport.use('oidc', new OAuth2Strategy(passport_parameter, function (accessToke
 			} else if (!user) {
 				return createUser(userInformation);
 			}
-			return done(err, user);
+			return done(null, user);
 		});
 	}
 	// checkpoint 5.5
@@ -234,7 +234,7 @@ passport.use('oidc', new OAuth2Strategy(passport_parameter, function (accessToke
 			if (err) {
 				return done(err);
 			}
-			return done(err, user);
+			return done(null, user);
 		});
 	}
 }));
@@ -257,7 +257,7 @@ With `checkpoint 3`: This `host` variable is your app's `URL`. If your app is to
 
 That, should be the only thing you may need to change in this file (or the port number if you're using a different port).
 
-Now, although I put `checkpoints` everywhere, for each of those checkpoints, I actually put comments in this demo code. So, you can go into the demo code's file and see what each of those checkpoints mean.
+Now, although I put `checkpoints` everywhere, for each of those checkpoints, I actually put comments in this demo code. So, you can go into the demo code's file and see what each of those checkpoints mean (I would even suggest taking that code instead of this one since this one has no comments).
 
 #### 3.3. Hook `passport.js` into `app.js`
 

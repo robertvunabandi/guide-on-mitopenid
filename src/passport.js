@@ -78,7 +78,7 @@ passport.use('oidc', new OAuth2Strategy(passport_parameter, function (accessToke
 			} else if (!user) {
 				return createUser(userInformation);
 			}
-			return done(err, user);
+			return done(null, user);
 		});
 	}
 
@@ -96,9 +96,13 @@ passport.use('oidc', new OAuth2Strategy(passport_parameter, function (accessToke
 			if (err) {
 				return done(err);
 			}
-			return done(err, user);
+			return done(null, user);
 		});
 	}
+
+	// you may ask, what is "done" doing? Done is simply supplying
+	// passport with either the user authenticated or an error.
+	// see docs here: http://www.passportjs.org/docs/authenticate/
 }));
 
 // this basically means passport is saving the user in a memory
