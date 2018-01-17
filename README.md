@@ -4,7 +4,7 @@ This guide will walk you through setting up [MIT OpenID Connect Pilot](https://o
 
 The code provided in this guide is a skeleton code for an app (similar to [Catbook](https://github.com/mit6148-workshops/catbook)) with server-side material located in `./src` and client-side material located in `./public`.
 
-If you would like to simply integrate MIT OpenID into your app without following this skeleton, skip over to that [section](#integrate-mit-openid-from-an-existing-source-code).
+If you would like to simply integrate MIT OpenID into your app without following this skeleton, skip over to that the section on [**INTEGRATE `MIT OpenID` FROM AN EXISTING SOURCE CODE**](#integrate-mit-openid-from-an-existing-source-code).
 
 This guide assumes that you are MIT affiliated. You will not be able to log into [oidc.mit.edu](https://oidc.mit.edu/) otherwise. It also assumes you are using `NodeJS` as an engine and running your server with `ExpressJS`. It also assumes that you are using a MongoDB database.
 
@@ -12,7 +12,7 @@ This guide assumes that you are MIT affiliated. You will not be able to log into
 
 This code will work correctly for `AuthorizationCode` Oauth2.0 requests (it doesn't matter too much what it is, but if you're curious, go under the section about understanding Oauth2.0). So, some parameters will have to be set as said here. 
 
-### Step 1: Get your app's client ID
+### Step 1: Get your app's client credentials
 
 Go on [oidc.mit.edu](https://oidc.mit.edu/) and log in. You should be able to log in with your kerberos and kerberos password. 
 
@@ -81,7 +81,7 @@ For the rest of this guide:
 - `AppUser` refers to the user of your app, and
 - `AppClient` refers to your application's server
 
-If you are starting a new project, go to that [section](#use-mit-openid-from-this-source-code) instead.
+If you are starting a new project, go to the section on [**USE `MIT OpenID` FROM THIS SOURCE CODE**](#use-mit-openid-from-this-source-code) instead.
 
 ### Step 1: Install Dependencies 
 
@@ -153,7 +153,7 @@ To keep our work clean, we will split the work of authenticating the user into m
 
 #### 3.1. Create `openid_credentials.js`
 
-This file will simply contain your credentials that you got from signing up to openid. If you haven't done so, follow the [guide](#step-1-get-your-apps-client-id) for creating you credential in the first section on [**Use MIT OpenID from this source code**](#use-mit-openid-from-this-source-code). Then, come back to this step.
+This file will simply contain your credentials that you got from signing up to openid. If you haven't done so, follow the [**get your app's client credentials**](#step-1-get-your-apps-client-credentials) guide for creating you credential under the first section on [**USE `MIT OpenID` FROM THIS SOURCE CODE**](#use-mit-openid-from-this-source-code). Then, come back to this step.
 
 Create the file `openid_credentials.js` inside of your `./src` directory. Then, copy this code into it: 
 ```javascript
