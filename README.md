@@ -265,9 +265,11 @@ I put multiple `checkpoints` in the code above so that the comments do not clutt
 
 With `checkpoint 1`, I want to mention that it assumes that you are using [MongoDB](https://docs.mongodb.com/manual/) and `mongoose`. If you are not, you will need to figure out how to store the user and retrieve inside of the big function call right after `checkpoint 5`.
 
-With `checkpoint 3`: This `host` variable is your app's `URL`. If your app is to be deployed, make sure to change it. An heroku `URL` would look like `https://mysterious-headland-54722.herokuapp.com` for example. That's the `URL` you would put there. *MAKE SURE **NOT** TO INCLUDE A `'/'` AT THE END!* 
+With `checkpoint 3`: This `host` variable is your app's `URL`. If your app is to be deployed, make sure to change it. An heroku `URL` would look like `https://mysterious-headland-54722.herokuapp.com` for example. That's the `URL` you would put there. *MAKE SURE **NOT** TO INCLUDE A `'/'` AT THE END!*
 
-That, should be the only thing you may need to change in this file (or the port number if you're using a different port).
+With `checkpoint 5.5`: In here, it creates the user's from the [Mongoose model](http://mongoosejs.com/docs/models.html) `User`. Remember that a `mongoose model`has a specific set of things that it can be. Therefore, the way the user's object is created here matters. The important parameter to keep in mind is the `sub` one in  `userInformation.sub`, which appears to be the MIT Open ID id (I am not entirely sure about this though).
+
+That, should be the only thing you may need to change in this file (unless you're using a different port number, then you will need to change that as well).
 
 Now, although I put `checkpoints` everywhere, for each of those checkpoints, I actually put comments in this demo code. So, if you want to know these things, you can go into the demo code's file for `passport.js` (i.e. this codebase, in `./src/passport.js`) and see what each of those checkpoints mean (I would even suggest taking that code instead of this one since this one has no comments).
 
