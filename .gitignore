@@ -4,3 +4,5 @@ node_modules/
 *.swp
 secret.js
 package-lock.json
+cert.pem
+key.pem
