@@ -1,12 +1,14 @@
-# HOW TO SET UP AND USE MIT OPENID
+# HOW TO SET UP AND USE `MIT OpenID Connect Pilot`
 
-This guide will walk you through setting up MIT OpenID for your app. The code provided in this guide is a skeleton code for an app (similar to [Catbook](https://github.com/mit6148-workshops/catbook)) with server-side material located in `./src` and client-side material located in `./public`.
+This guide will walk you through setting up [MIT OpenID Connect Pilot](https://oidc.mit.edu/) for your app, which is a mean of providing authentication through kerberos for MIT students and affiliates.
 
-If you would like to simply integrate MIT OpenID into your app without following this skeleton, skip over that section (it's titled **Integrate MIT OpenID from existing source code**).
+The code provided in this guide is a skeleton code for an app (similar to [Catbook](https://github.com/mit6148-workshops/catbook)) with server-side material located in `./src` and client-side material located in `./public`.
+
+If you would like to simply integrate MIT OpenID into your app without following this skeleton, skip over to that [section](#Integrate-MIT-OpenID-From-An-Existing-Source-Code).
 
 This guide assumes that you are MIT affiliated. You will not be able to log into [oidc.mit.edu](https://oidc.mit.edu/) otherwise. It also assumes you are using `NodeJS` as an engine and running your server with `ExpressJS`. It also assumes that you are using a MongoDB database.
 
-## Use MIT OpenID from this source code
+## USE `MIT OpenID` FROM THIS SOURCE CODE
 
 This code will work correctly for `AuthorizationCode` Oauth2.0 requests (it doesn't matter too much what it is, but if you're curious, go under the section about understanding Oauth2.0). So, some parameters will have to be set as said here. 
 
@@ -69,7 +71,7 @@ Then in this page, you confirm that you want to add the app:
 Then when you're logged in, it will take you here:
 ![home page logged in](images/screenshot8.png)
 
-## Integrate MIT OpenID from existing source code
+## INTEGRATE `MIT OpenID` FROM AN EXISTING SOURCE CODE
 
 To integrate MIT OpenID to your app, we need to make a set of assumptions about your file structure. 
 1. Your server files are in `./src`, and your public files are in `./public`.
@@ -79,7 +81,7 @@ For the rest of this guide:
 - `AppUser` refers to the user of your app, and
 - `AppClient` refers to your application's server
 
-If you are starting a new project, just use the [section](#Use MIT OpenID from this source code) about that instead.
+If you are starting a new project, go to that [section](#Use-MIT-OpenID-From-This-Source-Code) instead.
 
 ### Step 1: Install Dependencies 
 
@@ -89,11 +91,11 @@ Run the following:
 
     npm install --save express-session passport passport-oauth request 
 
-What each of those do:
-- `express-session`: We use sessions to save the `AppUser`'s `AccessToken`, which is like a key that allows your `AppClient` to get information about that user, on the `AppUser`'s browser. 
-- `passport`: PassportJS is our mean of authenticating.
-- `passport-oauth`: MIT OpenID abides by [Oauth2.0](https://oauth.net/2/), so we need the passport's implementation of Oauth2.0.
-- `request`: Needed to make GET and POST requests within the server. We use this to query the `AppUser`'s data (email, id, etc).
+What each of those do (which you do not need to know):
+- `express-session`: We use this to save the `AppUser`'s `AccessToken`, which is like a key that allows your `AppClient` to get information about that user, on the `AppUser`'s browser as a [web cookie](https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies). 
+- `passport`: [`PassportJS`](http://www.passportjs.org/) is our mean of authenticating the user.
+- `passport-oauth`: MIT OpenID abides by the [Oauth2.0](https://oauth.net/2/) protocol, so we need the passport's implementation of Oauth2.0.
+- `request`: Needed to make `GET` and `POST` requests within the server to other sites. We use this to query the `AppUser`'s data (email, id, etc).
 
 ### Step 2: Hook Up the right endpoints to your frontend
 
@@ -128,9 +130,9 @@ Our `renderNavbar` method sets the login button's href to point to `'/auth/oidc'
 
 If you have your own way of implementing your navbar (or if your login button is not on the navbar), just make sure to make a button with the `'a'` HTML tag that has `href='/auth/oidc'` so that it points to the correct endpoint on your backend to log the user in using MIT OpenID.
 
-Then, make your logout button point to the endpoint `'/logout'` (as done in the above example). 
+Then, make your logout button point to the endpoint `'/logout'` (as done in the above example). We will also implement this on our backent.
 
-Finally to run a get request to `'/whoami'` at the start of your app to get the `AppUser`'s credential and log them in. For us, we make the get request inside of `./public/js/script.js` (which is named `./public/js/index.js` on the Catbook app), which returns an empty object if the user is not logged in or returns a user object *from the MongoDB mLab database* if the user is logged in. 
+Finally, we need to run a get request to `'/whoami'` at the start of your app to get the `AppUser`'s credential and log them in (similar to what [Catbook](https://github.com/mit6148-workshops/catbook) did). For us, we make the get request inside of `./public/js/script.js` (which is named `./public/js/index.js` on the [Catbook](https://github.com/mit6148-workshops/catbook) app), which returns an empty object if the user is not logged in or returns a user object *from the MongoDB mLab database* if the user is logged in. 
 
 I.e., we do the following on load: 
 
@@ -151,9 +153,9 @@ To keep our work clean, we will split the work of authenticating the user into m
 
 #### 3.1. Create `openid_credentials.js`
 
-This file will simply contain your credentials that you got from signing up to openid. If you haven't done so, follow the **Step 1: Get your app's client ID** guide under the section on **Use MIT OpenID from this source code** above to sign up. Then, come back to this step.
+This file will simply contain your credentials that you got from signing up to openid. If you haven't done so, follow the [guide](#step-1-get-your-apps-client-id) for creating you credential in the first section on [**Use MIT OpenID from this source code**](#Use-MIT-OpenID-From-This-Source-Code). Then, come back to this step.
 
-Create `openid_credentials.js` inside of your `./src` directory. Then, copy this code into it: 
+Create the file `openid_credentials.js` inside of your `./src` directory. Then, copy this code into it: 
 ```javascript
 module.exports = {
 	client: {
@@ -167,9 +169,10 @@ module.exports = {
 	}
 };
 ``` 
-We will actually not use the `auth` key, but in case you didn't want to use `passport`, then you would need it. Also, it's there just so you know who the host is. For our case, it's `'https://oidc.mit.edu'`.
+We will actually not use the `auth` key, but in case you didn't want to use `passport`, then you would need it (for example, if you used [simple-oauth2](https://www.npmjs.com/package/simple-oauth2)). Also, it's there just so you know who the host is. For our case, it's `'https://oidc.mit.edu'`.
 
 #### 3.2. Create `passport.js`
+
 We will need to create a file just to handle what passport is doing to log `AppUser` in. Create the file `passport.js` inside of your `./src` directory, and then paste the following code into it:
 
 ```javascript
@@ -266,7 +269,7 @@ With `checkpoint 3`: This `host` variable is your app's `URL`. If your app is to
 
 That, should be the only thing you may need to change in this file (or the port number if you're using a different port).
 
-Now, although I put `checkpoints` everywhere, for each of those checkpoints, I actually put comments in this demo code. So, you can go into the demo code's file and see what each of those checkpoints mean (I would even suggest taking that code instead of this one since this one has no comments).
+Now, although I put `checkpoints` everywhere, for each of those checkpoints, I actually put comments in this demo code. So, if you want to know these things, you can go into the demo code's file for `passport.js` (i.e. this codebase, in `./src/passport.js`) and see what each of those checkpoints mean (I would even suggest taking that code instead of this one since this one has no comments).
 
 #### 3.3. Hook `passport.js` into `app.js`
 
@@ -276,9 +279,27 @@ Open your `./src/app.js` (or whichever file gets run when you run `npm start`, y
 
 We need to make sure passport actually runs. 
 
-Wherever you import your libraries, add the following `const session = require('express-session');`. This imports the `express-session` library. 
+Wherever you import your libraries, add the following 
 
-Then, wherever you import your local dependencies, make sure to import the newly created `passport.js` file with `const passport = require('./passport.js');` (you can also just write `const passport = require('./passport');`, `Javscript` will know it's a Javascript file). 
+```javascript
+const session = require('express-session');
+```
+
+This imports the `express-session` library. 
+
+Then, wherever you import your local dependencies, make sure to import the newly created `passport.js` file with 
+
+```javascript
+const passport = require('./passport.js'); 
+```
+
+You can also just write
+
+```javascript
+const passport = require('./passport');
+``` 
+
+because `Javscript` will know it's a Javascript file. 
 
 Then, before you set up your routes (for example, before placing `app.use('/', views);`), add the following line:
 
@@ -291,32 +312,27 @@ app.use(session({
 }));
 ```
 
-As it says in the comments, make sure to change your secret to something more secure. Then, right after that, add the following lines: 
+As it says in the comments, make sure to change your secret to something more secure. Then, right after that (and **make sure this comes after the `session`'s app.use**), add the following lines: 
 
 ```javascript
-// hook up passport
 app.use(passport.initialize());
 app.use(passport.session());
 ```
 
-Now, we're good with that. Then, the last thing we need to do is implement the `authentication routes` (these are done using `app.get` for `GET` requests sent to you `AppClient`). So, after you have set up your routes (for example, after placing `app.use('/', views);`), paste the following: 
+That will hook up passport with our app and starts its passport's session mechanism.
+
+Finally, the last thing we need to do here is implement the `authentication routes` (these are done using `app.get(...)` for `GET` requests sent to you `AppClient`). So, after you have set up your routes (for example, after placing `app.use('/', views);`), paste the following: 
 
 ```javascript
 // authentication routes
-// first route to make the authorization request and get the accessToken
-// the accessToken is a key that allows us to retrieve the requested
-// information from the server
 app.get('/auth/oidc', passport.authenticate('oidc'));
-// in the callback, we actually check if the user is logged in. If the
-// user is or is not, we take the appropriate action. usually,
-// failureRedirect is '/login', but we just send back to the home page
 app.get('/auth/oidc/callback', passport.authenticate('oidc', {
 	successRedirect: '/',
 	failureRedirect: '/'
 }));
 ```
 
-I also added functions as to what they do. If you remember, these are the endpoints we implemented into frontend.
+I also added comments as to what they do in this codebase (so again, it's better to copy the file from this codebase than from these snippets). If you remember, we already called the `'/auth/oidc'` endpoints on our frontend. That's a good pattern to use: *use it in the front end assuming it exists, then implement it in the backend*.
 
 #### 3.4: Implement `'/whoami'` and `'/logout'`
  
@@ -339,7 +355,7 @@ router.get('/whoami', function (req, res) {
 });
 ```
 
-`req.isAuthenticated()` is another method that `passport` 'magically' adds into our request. This method checks if the user is logged in. If they are not logged in, it just returns `false` (it's a boolean return method). For us, we wanted to return an empty object in case our user was not logged in, which is what that [ternary](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Conditional_Operator) operation does. 
+`req.isAuthenticated()` is another method that `passport` 'magically' adds into our request. This method checks if the user is logged in. If they are not logged in, it just returns `false` (it's a boolean return method). For us, we wanted to return an empty object in case our user was not logged in, which is what that [ternary](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Conditional_Operator) operation does. Somehow, the user's object is within the request (i.e. `req.user`). That is also something passport adds 'magically': it "places" (quote because it doens't really place) the user object inside of `req.user` for every requests sent to this server.
 
 **What if I do not have an `./src/routes/api.js` file?** 
 
@@ -359,21 +375,21 @@ const app = express();
 
 **What if I do not have an `./src/app.js` file?** 
 
-We assumed that you have it! Otherwise, how did you even get to this step? Some people name it `./src/index.js` instead of `./src/app.js`. 
+We assumed that you have it! Otherwise, how did you even get to this step? Some people name the file `./src/index.js` instead of `./src/app.js`. 
 
-Now, if you run `npm start`, your app (in theory) should be able to run and provide authentication with MIT OpenID. 
+Anyway: Now, if you run `npm start`, your app (in theory) should be able to run and provide authentication with MIT OpenID.
 
-## Following the Passport documentation
+## FOLLOWING THE `PassportJS` DOCUMENTATION
 
 How did I know how to use `passport` for this? I simply went on [passport](http://www.passportjs.org/docs/) and clicked on the `Oauth` section. I also copied a bit from [Catbook](https://github.com/mit6148-workshops/catbook).
 
 For `morgan`, I simply went on [morgan npm](https://www.npmjs.com/package/morgan)'s guide. This guide is very straightforward.
 
-## Understand how OAuth2.0 Work
+## UNDERSTANDING HOW `OAuth2.0` WORKS
 
 Below is simply a compiled list of links that helped me understand how OAuth2.0 works. It's valuable that this makes sense because you can better understand what the code is doing and easily integrate other authentication methods (e.g. Google, Twitter, etc) into your app. 
 
-### Guides that assume little background
+### Guides That Assume Little Background
 
 I recommend reading / watching from many sources. That gives many different perspectives to understanding how OAuth2.0 works with. I tried to put the links below in order of low assumptions to some assumptions. 
 
@@ -405,7 +421,7 @@ I tried to put the links below in order of low assumptions to more assumptions. 
 ](https://stackoverflow.com/questions/44685286/oauth2-using-post-and-yet-method-not-allowed)
 - [ietf](https://tools.ietf.org/html/rfc7519)
 
-## License
+## LICENSE
 
     Copyright 2018 Robert M. Vunabandi
 
