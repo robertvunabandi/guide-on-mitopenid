@@ -422,4 +422,4 @@ I tried to put the links below in order of low assumptions to more assumptions. 
 - [Oauth 2.0 Official Website](https://oauth.net/2/)
 - [StackOverflow: OAuth2, Using POST and Yet… Method Not Allowed?
 ](https://stackoverflow.com/questions/44685286/oauth2-using-post-and-yet-method-not-allowed)
-- [Internet Engineering Task Force (IETF)](https://tools.ietf.org/html/rfc7519)
+- [Internet Engineering Task Force (IETF)](https://tools.ietf.org/html/rfc7519): This is probably the most in-depth source. This is where OAuth 2.0 protocol is defined, so if you really want to understand everything about it, you should go here. Also, it's surprisingly clear!
