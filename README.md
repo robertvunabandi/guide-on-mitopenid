@@ -10,7 +10,7 @@ This guide assumes that you are MIT affiliated. You will not be able to log into
 
 ## USE `MIT OpenID` FROM THIS SOURCE CODE
 
-This code will work correctly for `AuthorizationCode` Oauth2.0 requests (it doesn't matter too much what it is, but if you're curious, go under the section about understanding Oauth2.0). So, some parameters will have to be set as said here. 
+This code will work correctly for `AuthorizationCode` Oauth 2.0 requests (it doesn't matter too much what it is, but if you're curious, go under the section about understanding Oauth 2.0). So, some parameters will have to be set as said here. 
 
 ### Step 1: Get your app's client credentials
 
@@ -94,7 +94,7 @@ Run the following:
 What each of those do (which you do not need to know):
 - `express-session`: We use this to save the `AppUser`'s `AccessToken`, which is like a key that allows your `AppClient` to get information about that user, on the `AppUser`'s browser as a [web cookie](https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies). 
 - `passport`: [`PassportJS`](http://www.passportjs.org/) is our mean of authenticating the user.
-- `passport-oauth`: MIT OpenID abides by the [Oauth2.0](https://oauth.net/2/) protocol, so we need the passport's implementation of Oauth2.0.
+- `passport-oauth`: MIT OpenID abides by the [Oauth 2.0](https://oauth.net/2/) protocol, so we need the passport's implementation of Oauth 2.0.
 - `request`: Needed to make `GET` and `POST` requests within the server to other sites. We use this to query the `AppUser`'s data (email, id, etc).
 
 ### Step 2: Hook Up the right endpoints to your frontend
@@ -387,13 +387,13 @@ How did I know how to use `passport` for this? I simply went on [passport](http:
 
 For `morgan`, I simply went on [morgan npm](https://www.npmjs.com/package/morgan)'s guide. This guide is very straightforward.
 
-## UNDERSTANDING HOW `OAuth2.0` WORKS
+## UNDERSTANDING HOW `OAuth 2.0` WORKS
 
-Below is simply a compiled list of links that helped me understand how OAuth2.0 works. It's valuable that this makes sense because you can better understand what the code is doing and easily integrate other authentication methods (e.g. Google, Twitter, etc) into your app. 
+Below is simply a compiled list of links that helped me understand how OAuth 2.0 works. It's valuable that this makes sense because you can better understand what the code is doing and easily integrate other authentication methods (e.g. Google, Twitter, etc) into your app. 
 
 ### Guides That Assume Little Background
 
-I recommend reading / watching from many sources. That gives many different perspectives to understanding how OAuth2.0 works with. I tried to put the links below in order of low assumptions to some assumptions. 
+I recommend reading / watching from many sources. That gives many different perspectives to understanding how OAuth 2.0 works with. I tried to put the links below in order of low assumptions to some assumptions. 
 
 - [InterSystems Learning Services: OAuth 2.0: An Overview](https://www.youtube.com/watch?v=CPbvxxslDTU): Very good Youtube video.
 - [DBA Presents: What is OpenID, OAuth2 and Google Sign In?](https://www.youtube.com/watch?v=1M6gqoGiO2s): Another really good Youtube video.
@@ -419,7 +419,7 @@ I tried to put the links below in order of low assumptions to more assumptions. 
 - [Request NPM](https://www.npmjs.com/package/request): Documentations for `request` on `npm`.
 - [StackExchange: Should we store accesstoken in our database for oauth2?](https://security.stackexchange.com/questions/72475/should-we-store-accesstoken-in-our-database-for-oauth2)
 - [StackOverflow: How do I redirect in expressjs while passing some context?](https://stackoverflow.com/questions/19035373/how-do-i-redirect-in-expressjs-while-passing-some-context)
-- [Oauth2.0 Official Website](https://oauth.net/2/)
+- [Oauth 2.0 Official Website](https://oauth.net/2/)
 - [StackOverflow: OAuth2, Using POST and Yet… Method Not Allowed?
 ](https://stackoverflow.com/questions/44685286/oauth2-using-post-and-yet-method-not-allowed)
 - [Internet Engineering Task Force (IETF)](https://tools.ietf.org/html/rfc7519)
