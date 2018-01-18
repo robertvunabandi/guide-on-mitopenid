@@ -405,20 +405,21 @@ I recommend reading / watching from many sources. That gives many different pers
 
 I tried to put the links below in order of low assumptions to more assumptions. Some of these videos are long; if you are using Chrome, I'd suggest using an extension that allow you to increase video speed (like [Video Speed Controller](https://chrome.google.com/webstore/detail/video-speed-controller/nffaoalbilbmmfgbnbgppjihopabppdk?hl=en)).
 
-- [Oracle Learning Library: OAuth Introduction and Terminology](https://www.youtube.com/watch?v=zEysfgIbqlg)
-- [Oracle Learning Library: OAuth Grant Types](https://www.youtube.com/watch?v=1ZX7554l8hY)
-- [Oracle Learning Library: OAuth Codes And Tokens](https://www.youtube.com/watch?v=8CHpnTysVOo)
-- [Oracle Learning Library: An Introduction To OpenID Connect](https://www.youtube.com/watch?v=6DxRTJN1Ffo)
-- [Oracle Learning Library: OpenID Connect Flows](https://www.youtube.com/watch?v=WVCzv50BslE&t=289s)
-- [Google Developers: Google I/O 2012 - OAuth 2.0 for Identity and Data Access](https://www.youtube.com/watch?v=YLHyeSuBspI&t=2669s): This uses python, but is very good if you have time to kill.
+- [Oracle Learning Library: OAuth Introduction and Terminology](https://www.youtube.com/watch?v=zEysfgIbqlg): Youtube video.
+- [Oracle Learning Library: OAuth Grant Types](https://www.youtube.com/watch?v=1ZX7554l8hY): Youtube video.
+- [Alex Bilbie: A Guide To OAuth 2.0 Grants](https://alexbilbie.com/guide-to-oauth-2-grants/): blog post.
+- [Oracle Learning Library: OAuth Codes And Tokens](https://www.youtube.com/watch?v=8CHpnTysVOo): Youtube video.
+- [Oracle Learning Library: An Introduction To OpenID Connect](https://www.youtube.com/watch?v=6DxRTJN1Ffo): Youtube video.
+- [Oracle Learning Library: OpenID Connect Flows](https://www.youtube.com/watch?v=WVCzv50BslE&t=289s): Youtube video.
+- [Google Developers: Google I/O 2012 - OAuth 2.0 for Identity and Data Access](https://www.youtube.com/watch?v=YLHyeSuBspI&t=2669s): This Youtube video uses python, but is very good if you have time to kill.
 
 ### Guides that assume a lot background (or are kind of unrelated)
 
-- [O'Reilly - Safari: Express.js Middleware Demystified](https://www.safaribooksonline.com/blog/2014/03/10/express-js-middleware-demystified/)
-- [Request NPM](https://www.npmjs.com/package/request)
+- [O'Reilly - Safari: Express.js Middleware Demystified](https://www.safaribooksonline.com/blog/2014/03/10/express-js-middleware-demystified/): A blog post.
+- [Request NPM](https://www.npmjs.com/package/request): Documentations for `request` on `npm`.
 - [StackExchange: Should we store accesstoken in our database for oauth2?](https://security.stackexchange.com/questions/72475/should-we-store-accesstoken-in-our-database-for-oauth2)
 - [StackOverflow: How do I redirect in expressjs while passing some context?](https://stackoverflow.com/questions/19035373/how-do-i-redirect-in-expressjs-while-passing-some-context)
 - [Oauth2.0 Official Website](https://oauth.net/2/)
 - [StackOverflow: OAuth2, Using POST and Yet… Method Not Allowed?
 ](https://stackoverflow.com/questions/44685286/oauth2-using-post-and-yet-method-not-allowed)
-- [ietf](https://tools.ietf.org/html/rfc7519)
+- [Internet Engineering Task Force (IETF)](https://tools.ietf.org/html/rfc7519)
