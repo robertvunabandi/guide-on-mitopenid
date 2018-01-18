@@ -4,7 +4,8 @@ const express = require('express');
 const router = express.Router();
 
 router.get('/whoami', function (req, res) {
-	res.send(req.isAuthenticated() ? req.user : {});
+	// TO IMPLEMENT: send an empty object for now
+	res.send({});
 });
 
 module.exports = router;

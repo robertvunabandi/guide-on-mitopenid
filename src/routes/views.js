@@ -8,7 +8,7 @@ router.get('/', function (request, response) {
 });
 
 router.get('/logout', function (req, res) {
-	req.logout();
+	// TO IMPLEMENT: redirect to home page for now
 	res.redirect('/');
 });
 

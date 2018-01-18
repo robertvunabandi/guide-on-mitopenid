@@ -9,7 +9,6 @@ const morgan = require('morgan');
 
 // local dependencies
 const db = require('./db');
-const passport = require('./passport');
 const views = require('./routes/views');
 const api = require('./routes/api');
 
@@ -33,34 +32,10 @@ app.use(cors());
 // https://www.npmjs.com/package/morgan
 app.use(morgan(':method :status :url :response-time ms :res[content-length]'));
 
-// set up sessions
-app.use(session({
-	secret: 'session-secret', // <- make sure to make this a more secure secret
-	resave: 'false',
-	saveUninitialized: 'true'
-}));
-
-// hook up passport
-app.use(passport.initialize());
-app.use(passport.session());
-
 // set routes
 app.use('/', views);
 app.use('/api', api);
 app.use('/static', express.static('public'));
-
-// authentication routes
-// first route to make the authorization request and get the accessToken
-// the accessToken is a key that allows us to retrieve the requested
-// information from the server
-app.get('/auth/oidc', passport.authenticate('oidc'));
-// in the callback, we actually check if the user is logged in. If the
-// user is or is not, we take the appropriate action. usually,
-// failureRedirect is '/login', but we just send back to the home page
-app.get('/auth/oidc/callback', passport.authenticate('oidc', {
-	successRedirect: '/',
-	failureRedirect: '/'
-}));
 
 // 404 route
 app.use(function (req, res, next) {

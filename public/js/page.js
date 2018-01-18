@@ -8,6 +8,9 @@ function newPageItem(text) {
 
 function renderPage(user) {
 	const page = document.getElementById('page');
+	// if user is logged in, we should see the following, but
+	// since we removed authentication, that should never work
+	// NOTE: This is a lowkey hack
 	if (user._id) {
 		page.appendChild(newPageItem("Now, you are logged in with <b style='color: darkred;'>MIT OpenID</b>. Your name is"));
 		page.appendChild(newPageItem("<i style='color: navy'>" + user.name + "</i>"));

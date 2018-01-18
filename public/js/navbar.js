@@ -24,9 +24,11 @@ function renderNavbar(user) {
 	navbarDiv.appendChild(newNavbarItem('Home', '/'));
 	// NOTE: this check is a lowkey hack
 	if (user._id) {
-		navbarDiv.appendChild(newNavbarItem('Logout', '/logout'));
+		// TO IMPLEMENT: send to home page for now
+		navbarDiv.appendChild(newNavbarItem('Logout', '/'));
 	} else {
-		navbarDiv.appendChild(newNavbarItem('Login', '/auth/oidc'));
+		// TO IMPLEMENT: send to home page for now
+		navbarDiv.appendChild(newNavbarItem('Login', '/'));
 	}
 	navbarDiv.appendChild(newNavbarItemTargetBlank('See Github', 'https://github.com/robertvunabandi/mitopenid'));
 }
