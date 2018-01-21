@@ -16,7 +16,7 @@ passport.use('mitopenid', new MITStrategy({
 	clientID: 'your client id from https://oidc.mit.edu/',
 	clientSecret: 'your client secret from https://oidc.mit.edu/',
 	callbackURL: host + '/auth/mitopenid/callback'
-}, function(accessToken, refreshToken, profile, done) {
+}, function (accessToken, refreshToken, profile, done) {
 	// uncomment the next line to see what your user object looks like
 	// console.log(profile);
 
@@ -56,7 +56,6 @@ passport.use('mitopenid', new MITStrategy({
 	}
 }));
 
-
 // store the user's id into the user's session. store just the id
 // so that it's efficient.
 // see: http://www.passportjs.org/docs/configure/
@@ -69,7 +68,7 @@ passport.serializeUser(function (user, done) {
 // place that user inside of req.user with done(err, user)
 // see: http://www.passportjs.org/docs/configure/
 passport.deserializeUser(function (id, done) {
-	User.findById(id, function(err, user) {
+	User.findById(id, function (err, user) {
 		done(err, user);
 	});
 });
