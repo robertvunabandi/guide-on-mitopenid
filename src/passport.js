@@ -1,96 +1,51 @@
 "use strict";
 // required for authentication
 const passport = require('passport');
-const OAuth2Strategy = require('passport-oauth').OAuth2Strategy;
-const request = require('request');
+const MITStrategy = require('passport-mitopenid').MITStrategy;
 
 // load the User model since the application user gets saved
 // within a function in this file
 const User = require('./models/user');
-
-// load your client credentials, which are provided by MIT OpenID
-const oauth_credentials = require('./openid_credentials.js');
 
 // if your app is deployed, change the host with whatever host
 // you have. A Heroku app host will look like:
 // https://mysterious-headland-54722.herokuapp.com
 const host = 'http://localhost:3000';
 
-// create the passport OAuth2.0 parameters
-// these parameters are simply required by OAuth2.0
-const passport_parameter = {
-	authorizationURL: 'https://oidc.mit.edu/authorize',
-	tokenURL: 'https://oidc.mit.edu/token',
-	clientID: oauth_credentials.client.id,
-	clientSecret: oauth_credentials.client.secret,
-	callbackURL: host + '/auth/oidc/callback'
-};
+passport.use('mitopenid', new MITStrategy({
+	clientID: 'your client id from https://oidc.mit.edu/',
+	clientSecret: 'your client secret from https://oidc.mit.edu/',
+	callbackURL: host + '/auth/mitopenid/callback'
+}, function(accessToken, refreshToken, profile, done) {
+	// uncomment the next line to see what your user object looks like
+	// console.log(profile);
 
-// the first parameter is 'oidc'. Inside of ./src/app.js, you will
-// see app.get('/auth/oidc', passport.authenticate('oidc'));
-// the part where it says passport.authenticate('oidc') is when
-// passport goes into executing the function inside of this. Before
-// doing it though, it does many things (like 'magic') in order
-// to get the accessToken and refreshToken.
-passport.use('oidc', new OAuth2Strategy(passport_parameter, function (accessToken, refreshToken, profile, done) {
-
-	// the callback of this function is to simply run getUserInformation(),
-	// which is defined below
-	getUserInformation();
-
-	// make a request to openid to get the information about this user,
-	// which we're able to get because we have the accessToken (like a
-	// key) that oidc.mit.edu needs in order to provide us with the
-	// requested information
-	function getUserInformation() {
-		request(buildUserInfoRequestParameter(accessToken), function (error, response, body) {
-			if (!error && response.statusCode === 200) {
-				// uncomment the next line to see what your user object looks like
-				// console.log(JSON.parse(body))
-				return findOrCreateUser(JSON.parse(body));
-			} else {
-				return done(new Error('An error occurred while making the access request'));
-			}
-		});
-	}
-
-	// this function basically works with 'request' to make a get request
-	// with the header 'Authorization': 'Bearer <accessToken>', which is
-	// where we put the key (accessToken) in order to exchange it for the
-	// application user's informations
-	function buildUserInfoRequestParameter(accessToken) {
-		return {
-			url: 'https://oidc.mit.edu/userinfo',
-			headers: {
-				'Authorization': 'Bearer ' + accessToken
-			}
-		};
-	}
-
-	// see comment at the end of file for what userInformation looks like
+	// see comment at the end of file for what profile looks like
 	// once we get the user's information from the request above, we need
 	// to check if we have this user in our db. If not, we create this
 	// user.
-	function findOrCreateUser(userInformation) {
-		User.findOne({openid: userInformation.sub}, function (err, user) {
-			if (err) {
-				return done(err);
-			} else if (!user) {
-				return createUser(userInformation);
-			}
+	User.findOne({mitid: profile.id}, function (err, user) {
+		if (err) {
+			return done(err);
+		} else if (!user) {
+			// if we don't find the user, that means this is the first
+			// time this use is logging into our application, so, we
+			// create this user.
+			return createUser();
+		} else {
 			return done(null, user);
-		});
-	}
+		}
+	});
 
-	// simply create the user using the mongoose model User
-	function createUser(userInformation) {
+	// create the user using the mongoose model User
+	function createUser() {
 		const new_user = new User({
-			name: userInformation.name,
-			given_name: userInformation.given_name,
-			middle_name: userInformation.middle_name,
-			family_name: userInformation.family_name,
-			email: userInformation.email,
-			openid: userInformation.sub
+			name: profile.name,
+			given_name: profile.given_name,
+			middle_name: profile.middle_name,
+			family_name: profile.family_name,
+			email: profile.email,
+			mitid: profile.id
 		});
 		new_user.save(function (err, user) {
 			if (err) {
@@ -99,30 +54,32 @@ passport.use('oidc', new OAuth2Strategy(passport_parameter, function (accessToke
 			return done(null, user);
 		});
 	}
-
-	// you may ask, what is "done" doing? Done is simply supplying
-	// passport with either the user authenticated or an error.
-	// see docs here: http://www.passportjs.org/docs/authenticate/
 }));
 
-// this basically means passport is saving the user in a memory
-// efficient manner
+
+// store the user's id into the user's session. store just the id
+// so that it's efficient.
+// see: http://www.passportjs.org/docs/configure/
 passport.serializeUser(function (user, done) {
-	done(null, user);
+	done(null, user._id);
 });
 
-// when we need that user that passport saved above, this method
-// simply returns that user that it had saved
-passport.deserializeUser(function (user, done) {
-	done(null, user);
+// retrieve the id that we saved in the user's cookie session with
+// serializeUser, find that user with User.findById, then finally,
+// place that user inside of req.user with done(err, user)
+// see: http://www.passportjs.org/docs/configure/
+passport.deserializeUser(function (id, done) {
+	User.findById(id, function(err, user) {
+		done(err, user);
+	});
 });
 
 module.exports = passport;
 
 /*
-user_info (which is JSON.parse(body)) looks like:
+profile looks like:
 {
-	sub: String [this seems to be the user's id],
+	id: String,
 	name: String,
 	preferred_username: String [Kerberos],
 	given_name: String [First name],

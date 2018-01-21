@@ -6,3 +6,4 @@ secret.js
 package-lock.json
 cert.pem
 key.pem
+playground.js

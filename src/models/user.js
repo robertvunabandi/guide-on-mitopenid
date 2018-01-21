@@ -10,8 +10,7 @@ const UserSchema = new mongoose.Schema({
 	middle_name: String,
 	family_name: String,
 	email: String,
-	// this is the "sub" parameter returned in openid connection
-	openid: String
+	mitid: String
 });
 
 module.exports = mongoose.model('User', UserSchema);

@@ -26,7 +26,7 @@ function renderNavbar(user) {
 	if (user._id) {
 		navbarDiv.appendChild(newNavbarItem('Logout', '/logout'));
 	} else {
-		navbarDiv.appendChild(newNavbarItem('Login', '/auth/oidc'));
+		navbarDiv.appendChild(newNavbarItem('Login', '/auth/mitopenid'));
 	}
 	navbarDiv.appendChild(newNavbarItemTargetBlank('See Github', 'https://github.com/robertvunabandi/mitopenid'));
 }

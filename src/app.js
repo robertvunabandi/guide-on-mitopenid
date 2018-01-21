@@ -53,11 +53,11 @@ app.use('/static', express.static('public'));
 // first route to make the authorization request and get the accessToken
 // the accessToken is a key that allows us to retrieve the requested
 // information from the server
-app.get('/auth/oidc', passport.authenticate('oidc'));
+app.get('/auth/mitopenid', passport.authenticate('mitopenid'));
 // in the callback, we actually check if the user is logged in. If the
 // user is or is not, we take the appropriate action. usually,
 // failureRedirect is '/login', but we just send back to the home page
-app.get('/auth/oidc/callback', passport.authenticate('oidc', {
+app.get('/auth/mitopenid/callback', passport.authenticate('mitopenid', {
 	successRedirect: '/',
 	failureRedirect: '/'
 }));
