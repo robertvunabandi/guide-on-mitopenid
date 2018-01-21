@@ -1,6 +1,6 @@
 # HOW TO SET UP AND USE `MIT OpenID Connect Pilot`
 
-This guide will walk you through setting up [MIT OpenID Connect Pilot](https://oidc.mit.edu/) (**MOIDC**) for your app, which is a mean of providing authentication through kerberos for MIT students and affiliates.
+This guide will walk you through setting up [MIT OpenID Connect Pilot](https://oidc.mit.edu/) (**MOIDC**) for your app, which is a mean of providing authentication through kerberos for MIT students and affiliates, using [PassportJS](http://www.passportjs.org/) and the `npm` package [passport-mitopenid](https://www.npmjs.com/package/passport-mitopenid).
 
 The code provided in this guide is a skeleton code for an app (similar to [Catbook](https://github.com/mit6148-workshops/catbook)) with server-side material located in `./src` and client-side material located in `./public`.
 
@@ -87,7 +87,7 @@ For the rest of this guide:
 
 If you are starting a new project, go to the section on [**USE `MIT OpenID` FROM THIS SOURCE CODE**](#use-mit-openid-from-this-source-code) instead.
 
-Finally, to implement this, we made use of the `npm` module [`passport-mitopenid`](https://www.npmjs.com/package/passport-mitopenid).
+Finally, to implement this, we made use of the `npm` module [passport-mitopenid](https://www.npmjs.com/package/passport-mitopenid).
 
 ### Step 1: Install Dependencies 
 
@@ -100,7 +100,7 @@ Run the following:
 What each of those do (which you do not need to know):
 - `express-session`: We use this to save the `AppUser`'s `AccessToken`, which is like a key that allows your `AppClient` to get information about that user, on the `AppUser`'s browser as a [web cookie](https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies). 
 - `passport`: [`PassportJS`](http://www.passportjs.org/) is our mean of authenticating the user.
-- `passport-mitopenid`: MIT OpenID abides by the [Oauth 2.0](https://oauth.net/2/) protocol, so we need the passport's implementation Strategy of Oauth 2.0 for MOIDC.
+- [`passport-mitopenid`](https://www.npmjs.com/package/passport-mitopenid): MIT OpenID abides by the [Oauth 2.0](https://oauth.net/2/) protocol, so we need the passport's implementation Strategy of Oauth 2.0 for MOIDC. passport-mitopenid is just the right passport-strategy for this.
 
 ### Step 2: Hook Up the right endpoints to your frontend
 
@@ -162,7 +162,7 @@ To keep our work clean, we will split the work of authenticating the user into m
 
 #### 3.1. Create `passport.js`
 
-We will need to create a file just to handle what passport is doing to log `AppUser` in. Create the file `passport.js` inside of your `./src` directory, and then paste the following code into it:
+We will need to create a file just to handle what [passport](http://www.passportjs.org/) is doing to log `AppUser` in. Create the file `passport.js` inside of your `./src` directory, and then paste the following code into it:
 
 ```javascript
 const passport = require('passport');
@@ -235,7 +235,7 @@ By now, your app is almost ready to run!
 
 Open your `./src/app.js` (or whichever file gets run when you run `npm start`, which you can see inside your `package.json`).
 
-We need to make sure passport actually runs. 
+We need to make sure [passport](http://www.passportjs.org/) actually runs. 
 
 Wherever you import your libraries, add the following 
 
@@ -279,7 +279,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 ```
 
-That will hook up passport with our app and starts its passport's session mechanism.
+That will hook up [passport](http://www.passportjs.org/) with our app and starts its passport's session mechanism.
 
 Finally, the last thing we need to do here is implement the `authentication routes` (these are done using `app.get(...)` for `GET` requests sent to you `AppClient`). So, after you have set up your routes (for example, after placing `app.use('/', views);`), paste the following: 
 
@@ -315,7 +315,7 @@ router.get('/whoami', function (req, res) {
 });
 ```
 
-`req.isAuthenticated()` is another method that `passport` 'magically' adds into our request. This method checks if the user is logged in. If they are not logged in, it just returns `false` (it's a boolean return method). For us, we wanted to return an empty object in case our user was not logged in, which is what that [ternary](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Conditional_Operator) operation does. Somehow, the user's object is within the request object (i.e. `req.user`). That is also something passport adds 'magically': it "places" (quote because it doens't really place) the user object inside of `req.user` for every requests sent to this server.
+`req.isAuthenticated()` is another method that `passport` 'magically' adds into our request. This method checks if the user is logged in. If they are not logged in, it just returns `false` (it's a boolean return method). For us, we wanted to return an empty object in case our user was not logged in, which is what that [ternary](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Conditional_Operator) operation does. Somehow, the user's object is within the request object (i.e. `req.user`). That is also something [passport](http://www.passportjs.org/) adds 'magically': it "places" (quote because it doens't really place) the user object inside of `req.user` for every requests sent to this server.
 
 **What if I do not have an `./src/routes/api.js` file?** 
 
@@ -345,13 +345,13 @@ Anyway: Now, if you run `npm start`, your app (in theory) should be able to run 
 
 How did I know how to use `passport` for this? I simply went on [passport](http://www.passportjs.org/docs/) and clicked on the `Oauth` section. I also copied a bit from [Catbook](https://github.com/mit6148-workshops/catbook).
 
-I highly suggest reading through these documentations. They make understanding passport a lot easier than plugging random stuffs into the code.
+I highly suggest reading through these documentations. They make understanding [passport](http://www.passportjs.org/) a lot easier than plugging random stuffs into the code.
 
 ## UNDERSTANDING HOW `OAuth 2.0` WORKS
 
 Below is simply a compiled list of links that helped me understand how OAuth 2.0 works. 
 
-After having gone through them, this whole passport 'magic' made sense to me! So, I think it's valuable that this 'magic' makes sense because you can better understand what the code is doing and easily integrate other authentication methods (e.g. Google, Twitter, etc) into your app and even have an app with multiple authentication methods. 
+After having gone through them, this whole [passport](http://www.passportjs.org/) 'magic' made sense to me! So, I think it's valuable that this 'magic' makes sense because you can better understand what the code is doing and easily integrate other authentication methods (e.g. Google, Twitter, etc) into your app and even have an app with multiple authentication methods. 
 
 ### Guides That Assume Little Background
 
